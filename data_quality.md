@@ -5,12 +5,12 @@
   ```SQL
   --Впишите сюда ваш ответ
   SELECT u.login
-        , count(1) as cnt
-     FROM users u
-    group by u.login
-   having count(1) > 1;
+       , COUNT(1) as cnt
+    FROM users u
+   GROUP BY u.login
+  HAVING COUNT(1) > 1;
   ```
-  
+
   В данном случае, все логины уникальны.
 
   Предлагается создать следующий индекс и ограничение уникальности
@@ -136,3 +136,20 @@
 
 ## 1.3.2. Описание используемых инструментов для обеспечения качества данных в таблицах схемы production
 
+| Таблицы             | Объект                          | Инструмент                          | Для чего используется                                                                               |
+| ------------------- | ------------------------------- | ------------------------------------| ----------------------------------------------------------------------------------------------------|
+| production.users    | id int                          | Первичный ключ users_pkey           | Обеспечивает уникальность записей о пользователях                                                   |
+| production.users    | login varchar(2048)             | Ограничение NOT NULL                | Обеспечивает отсутствие NULL-значений в поле login                                                  |
+| production.users    | login varchar(2048)             | Уникальный ключ users_ukey          | Обеспечивает уникальность пользовательских логинов                                                  |
+| production.products | id int                          | Первичный ключ products_pkey        | Обеспечивает уникальность записей о продуктах                                                       |
+| production.products | name varchar(2048)              | Ограничение NOT NULL                | Обеспечивает отсутствие NULL-значений в поле name                                                   |
+| production.products | price numeric(19,5)             | products_price_check                | Обеспечивает наличие только положительных значений цены товара                                      |
+| production.orders   | order_id int                    | Первичный ключ orders               | Обеспечивает уникальность записей о заказах                                                         |
+| production.orders   | order_ts timestamp              | Ограничение NOT NULL                | Обеспечивает отсутствие NULL-значений в дате и времени заказа                                       |
+| production.orders   | user_id int                     | Ограничение NOT NULL                | Обеспечивает отсутствие NULL-значений в идентификаторах пользователей                               |
+| production.orders   | user_id int                     | Внешний ключ orders_user_id_fk      | Обеспечивает наличие только тех идентификаторов пользователей, которые присутствуют в таблице users |
+| production.orders   | bonus_payment numeric(19,5)     | Ограничение NOT NULL                | Обеспечивает отсутствие NULL-значений в поле bonus_payment                                          |
+| production.orders   | "cost" numeric(19,5)            | Ограничение NOT NULL                | Обеспечивает отсутствие NULL-значений в поле cost                                                   |
+| production.orders   | bonus_grant numeric(19,5)       | Ограничение NOT NULL                | Обеспечивает отсутствие NULL-значений в поле bonus_grant                                            |
+| production.orders   | "cost", bonus_grant, payment    | Ограничение orders_check типа CHECK | Стоимость заказа = payment + bonus_payment                                                          |
+| production.orders   | status int                      | Ограничение NOT NULL                | Обеспечивает отсутствие NULL-значений в поле status                                                 |
