@@ -159,12 +159,17 @@
 
 16) **У любого заказа не может быть повторяющихся статусов, это обеспечивается ограничением уникальности orderstatuslog_order_id_status_id_key** 
 
-17) **Поскольку поля order_id и status_id таблицы production.orderstatuslog являются внешними ключами, то предлагается создать следующий индекс для поля status_id.**
+17) **Поскольку поле status_id таблицы production.orderstatuslog является внешним ключом, то предлагается создать следующий индекс.**
 
     ```SQL
     CREATE INDEX IF NOT EXISTS orderstatuslog_status_id_ix ON production.orderstatuslog(status_id);
     ```
 
+18) **Поскольку поле product_id таблицы production.orderstatuslog является внешним ключом, то предлагается создать следующий индекс.**
+
+    ```SQL
+    CREATE INDEX IF NOT EXISTS orderstatuslog_prooduct_id_ix ON production.orderstatuslog(product_id);
+    ```
 ## 1.3.2. Описание используемых инструментов для обеспечения качества данных в таблицах схемы production
 
 | Таблицы | Объект | Инструмент | Для чего используется
@@ -194,3 +199,13 @@
 | production.orderstatuslog | status_id int | Внешний ключ orderstatuslog_status_id_fkey | Обеспечивает наличие только тех идентификаторов статусов, которые присутствуют в таблице orderstatuses
 | production.orderstatuslog | order_id int, status_id int | Уникальный ключ orderstatuslog_order_id_status_id_key | У заказа не могут повторяться статусы
 | production.orderstatuslog | dttm timestamp | Ограничение NOT NULL | Обеспечивает отсутствие NULL-значений в отметке времени статуса заказа
+| production.orderitems | id int | Первичный ключ orderitems_pkey | Обеспечивает уникальность значений поля id
+| production.orderitems | product_id int | Ограничение NOT NULL | Обеспечивает отсутствие NULL-значений в поле product_id
+| production.orderitems | product_id int | Внешний ключ orderitems_product_id_fkey | Обеспечивает наличие только тех идентификаторов продуктов, которые присутствуют в таблице products
+| production.orderitems | order_id int | Ограничение NOT NULL | Обеспечивает отсутствие NULL-значений в поле order_id
+| production.orderitems | order_id int | Внешний ключ orderitems_order_id_fkey | Обеспечивает наличие только тех идентификаторов заказов, которые присутствуют в таблице orders
+| production.orderitems | order_id int, product_id int | Уникальный ключ orderitems_order_id_product_id_key | Продукт в рамках одного заказа не может повторяться
+| production.orderitems | name varchar(2048) | Ограничение NOT NULL | Обеспечивает отсутствие NULL-значений в наименовании продукта
+| production.orderitems | price numeric(19, 5) | Ограничение типа CHECK orderitems_price_check | Цена товара не может быть отрицательным числом
+| production.orderitems | discount numeric(19, 5) | Ограничение типа CHECK orderitems_check | Значение скидки может быть от 0 до цены товара
+| production.orderitems | quantity int | Ограничение типа CHECK orderitems_quantity_check | Количество того или иного продукта должно быть положителным числом
