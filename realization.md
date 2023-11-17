@@ -37,21 +37,21 @@
 
 ### 1.4.1. Сделайте VIEW для таблиц из базы production.
 
-Результаты представлены в файле views.sql
+Результаты представлены в файле sql/views.sql
 
 ### 1.4.2. Напишите DDL-запрос для создания витрины.
 
-Результаты представлены в файле datamart_dll.sql
+Результаты представлены в файле sql/datamart_dll.sql
 
 ### 1.4.3. Напишите SQL запрос для заполнения витрины
 
 Результаты представлены в файлах:
 
-  - tmp_rfm_recency.sql
-  - tmp_rfm_frequency.sql
-  - tmp_rfm_monetary_value.sql
+  - sql/tmp_rfm_recency.sql
+  - sql/tmp_rfm_frequency.sql
+  - sql/tmp_rfm_monetary_value.sql
 
 
 ## 2. Доработка представлений
 
-Результаты представлены в файле orders_view.sql
+Результаты представлены в файле sql/orders_view.sql
