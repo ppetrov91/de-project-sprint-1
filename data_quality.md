@@ -23,37 +23,37 @@
   
 2) В таблице products price должна быть положительной.
 
-   В данном случае это можно проверить с помощью запроса ниже.
+  В данном случае это можно проверить с помощью запроса ниже.
 
-   ```SQL
-   SELECT p.id
-     FROM production.products p
-    WHERE p.price <= 0;
-   ```
+  ```SQL
+  SELECT p.id
+    FROM production.products p
+   WHERE p.price <= 0;
+  ```
 
-   Также для поля price создано ограничение products_price_cl типа CHECK, что не позволяет 
+  Также для поля price создано ограничение products_price_cl типа CHECK, что не позволяет 
 
-   цене товара быть отрицательной или нулевой.
+  цене товара быть отрицательной или нулевой.
    
 3) Наименование товара не может быть пустым.
 
-   В СУБД PostgreSQL NULL и пустая строка не является одним и тем же.
+  В СУБД PostgreSQL NULL и пустая строка не является одним и тем же.
 
-   Также может быть ситуация, при которой в наименовании товара могут быть одни пробелы
+  Также может быть ситуация, при которой в наименовании товара могут быть одни пробелы
 
-    В данном случае это можно проверить с помощью запроса ниже.
+  В данном случае это можно проверить с помощью запроса ниже.
 
-    ```SQL
-     SELECT p.id
-       FROM production.products p
-      WHERE p.name IS NULL OR trim(p.name) = '';
-    ```
+  ```SQL
+  SELECT p.id
+    FROM production.products p
+   WHERE p.name IS NULL OR trim(p.name) = '';
+  ```
 
 4) Cтрока с leading и trailing пробелами и без них являются разными, что может
 
-   вызвать проблемы с уникальностью имён товаров при удалении пробелов.
+  вызвать проблемы с уникальностью имён товаров при удалении пробелов.
 
-   Запрос ниже показывает отсутствует leading и trailing пробелов в поле name
+  Запрос ниже показывает отсутствует leading и trailing пробелов в поле name
 
   ```SQL
   SELECT p.id
@@ -63,13 +63,13 @@
 
 5) Запрос ниже показывает отсутствие дубликатов в именах товаров:
 
-   ```SQL
-   SELECT TRIM(p.name) as name
-        , COUNT(1) as cnt
-      FROM production.products p
-     GROUP BY TRIM(p.name)
-    HAVING COUNT(1) > 1;
-   ```
+  ```SQL
+  SELECT TRIM(p.name) as name
+       , COUNT(1) as cnt
+    FROM production.products p
+   GROUP BY TRIM(p.name)
+  HAVING COUNT(1) > 1;
+  ```
 
 6) Отсутствует ограничение уникальности на поле name, предлагается его создать следующим образом:
 
@@ -81,56 +81,57 @@
 
 7) Обнаружено отсутствие внешнего ключа между таблицами users и orders. 
 
-   Без пользователя заказ не может существовать, запрос ниже подтверждает это
+  Без пользователя заказ не может существовать, запрос ниже подтверждает это
 
-   ```SQL
-   SELECT o.user_id
-     FROM production.orders o
-    WHERE NOT EXISTS (SELECT 1
-                        FROM production.users u
-                       WHERE u.id = o.user_id);
-   ```
+  ```SQL
+  SELECT o.user_id
+    FROM production.orders o
+   WHERE NOT EXISTS (SELECT 1
+                       FROM production.users u
+                      WHERE u.id = o.user_id);
+  ```
 
-   Предлагается создать внешний ключ для связки таблиц orders и users следующим образом:
+  Предлагается создать внешний ключ для связки таблиц orders и users следующим образом:
 
-   ```SQL
-   ALTER TABLE production.orders ADD CONSTRAINT orders_user_id_fk FOREIGN KEY(user_id) REFERENCES production.users(id);
-   ```
+  ```SQL
+  ALTER TABLE production.orders 
+    ADD CONSTRAINT orders_user_id_fk FOREIGN KEY(user_id) REFERENCES production.users(id);
+  ```
 
 8) Один пользователь в одну и ту же отметку времени не может создать более одного заказа, 
 
-   запрос ниже подтверждает это:
+  запрос ниже подтверждает это:
 
-   ```SQL
-   SELECT o.order_ts
-        , o.user_id
-        , COUNT(1) AS cnt 
-     FROM production.orders o
-    GROUP BY o.order_ts, o.user_id
-    HAVING COUNT(1) > 1;
+  ```SQL
+  SELECT o.order_ts
+       , o.user_id
+       , COUNT(1) AS cnt 
+    FROM production.orders o
+   GROUP BY o.order_ts, o.user_id
+  HAVING COUNT(1) > 1;
   ```
 
 9) В настоящий момент представлены данные от 2022-02-12 02:41:28 до 2022-03-14 02:38:36, т.е, за месяц
 
-   Это можно проверить запросом ниже:
+  Это можно проверить запросом ниже:
 
-   ```SQL
-   SELECT MIN(o.order_ts)
-        , MAX(o.order_ts) 
-     FROM production.orders o;
-   ```
+  ```SQL
+  SELECT MIN(o.order_ts)
+       , MAX(o.order_ts) 
+    FROM production.orders o;
+  ```
 
 10) Значение поля status таблицы production.orders должно совпадать со значением поля id таблицы production.orderstatuses
 
-   Это можно проверить запросом ниже:
+  Это можно проверить запросом ниже:
 
-   ```SQL
-   SELECT o.status
-     FROM production.orders o
-    WHERE NOT EXISTS (SELECT 1
-                        FROM production.orderstatuses os
-                       WHERE os.id = o.status);
-   ```                    
+  ```SQL
+  SELECT o.status
+    FROM production.orders o
+   WHERE NOT EXISTS (SELECT 1
+                       FROM production.orderstatuses os
+                      WHERE os.id = o.status);
+  ```                    
 
 11) Тип данных полей bonus_payment, payment, cost и bonus_grant numeric(19, 5), это гарантирует сохранение только числовых значений.
 
