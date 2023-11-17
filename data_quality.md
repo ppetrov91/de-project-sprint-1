@@ -4,21 +4,21 @@
 
    В данном случае, все логины уникальны.
 
-  ```SQL
-  SELECT u.login
-       , COUNT(1) as cnt
-    FROM users u
-   GROUP BY u.login
-  HAVING COUNT(1) > 1;
-  ```
+   ```SQL
+   SELECT u.login
+        , COUNT(1) as cnt
+     FROM users u
+    GROUP BY u.login
+   HAVING COUNT(1) > 1;
+   ```
 
 2) **Предлагается создать следующий индекс и ограничение уникальности:**
 
-  ```SQL
-  CREATE UNIQUE INDEX users_login_ukey ON production.users (login);
+   ```SQL
+   CREATE UNIQUE INDEX users_login_ukey ON production.users (login);
 
-  ALTER TABLE production.users ADD CONSTRAINT users_login_ukey UNIQUE USING INDEX users_login_ukey;
-  ```
+   ALTER TABLE production.users ADD CONSTRAINT users_login_ukey UNIQUE USING INDEX users_login_ukey;
+   ```
   
 3) **В таблице products price должна быть положительной.**
 
@@ -96,6 +96,8 @@
    ```SQL
    ALTER TABLE production.orders 
      ADD CONSTRAINT orders_user_id_fk FOREIGN KEY(user_id) REFERENCES production.users(id);
+
+   CREATE INDEX IF NOT EXISTS orders_user_id_ix ON production.orders(user_id);
    ```
 
 10) **Один пользователь в одну и ту же отметку времени не может создать более одного заказа.**
@@ -133,24 +135,62 @@
                         WHERE os.id = o.status);
     ```                    
 
-13) **Тип данных полей bonus_payment, payment, cost и bonus_grant numeric(19, 5), это гарантирует сохранение только числовых значений.**
+13) **Тип данных полей bonus_payment, payment, cost и bonus_grant таблицы production.orders numeric(19, 5), это гарантирует сохранение только числовых значений.**
+
+14) **Значения поля key таблицы production.orderstatuses являются уникальными, что проверяется запросом ниже:**
+    ```SQL
+    SELECT os.key
+         , COUNT(1) AS cnt
+      FROM production.orderstatuses os
+     GROUP BY os.key
+    HAVING COUNT(1) > 1;
+    ```
+
+15) **Отсутствует ограничение уникальности на поле key таблицы production.orderstatuses.**
+
+    Предлагается создать ограничение уникальности для поля key:
+
+    ```SQL
+    CREATE UNIQUE INDEX IF NOT EXISTS orderstatuses_key_ukey ON production.orderstatuses(key);
+
+    ALTER TABLE production.orderstatuses 
+      ADD CONSTRAINT orderstatuses_key_ukey UNIQUE USING INDEX orderstatuses_key_ukey;
+    ```
+
+16) **У любого заказа не может быть повторяющихся статусов, это обеспечивается ограничением уникальности orderstatuslog_order_id_status_id_key** 
+
+17) **Поскольку поля order_id и status_id таблицы production.orderstatuslog являются внешними ключами, то предлагается создать следующий индекс для поля status_id.**
+
+    ```SQL
+    CREATE INDEX IF NOT EXISTS orderstatuslog_status_id_ix ON production.orderstatuslog(status_id);
+    ```
 
 ## 1.3.2. Описание используемых инструментов для обеспечения качества данных в таблицах схемы production
 
-| Таблицы             | Объект                          | Инструмент                          | Для чего используется                                                                               |
-| ------------------- | ------------------------------- | ------------------------------------| ----------------------------------------------------------------------------------------------------|
-| production.users    | id int                          | Первичный ключ users_pkey           | Обеспечивает уникальность записей о пользователях                                                   |
-| production.users    | login varchar(2048)             | Ограничение NOT NULL                | Обеспечивает отсутствие NULL-значений в поле login                                                  |
-| production.users    | login varchar(2048)             | Уникальный ключ users_ukey          | Обеспечивает уникальность пользовательских логинов                                                  |
-| production.products | id int                          | Первичный ключ products_pkey        | Обеспечивает уникальность записей о продуктах                                                       |
-| production.products | name varchar(2048)              | Ограничение NOT NULL                | Обеспечивает отсутствие NULL-значений в поле name                                                   |
-| production.products | price numeric(19,5)             | products_price_check                | Обеспечивает наличие только положительных значений цены товара                                      |
-| production.orders   | order_id int                    | Первичный ключ orders               | Обеспечивает уникальность записей о заказах                                                         |
-| production.orders   | order_ts timestamp              | Ограничение NOT NULL                | Обеспечивает отсутствие NULL-значений в дате и времени заказа                                       |
-| production.orders   | user_id int                     | Ограничение NOT NULL                | Обеспечивает отсутствие NULL-значений в идентификаторах пользователей                               |
-| production.orders   | user_id int                     | Внешний ключ orders_user_id_fk      | Обеспечивает наличие только тех идентификаторов пользователей, которые присутствуют в таблице users |
-| production.orders   | bonus_payment numeric(19,5)     | Ограничение NOT NULL                | Обеспечивает отсутствие NULL-значений в поле bonus_payment                                          |
-| production.orders   | "cost" numeric(19,5)            | Ограничение NOT NULL                | Обеспечивает отсутствие NULL-значений в поле cost                                                   |
-| production.orders   | bonus_grant numeric(19,5)       | Ограничение NOT NULL                | Обеспечивает отсутствие NULL-значений в поле bonus_grant                                            |
-| production.orders   | "cost", bonus_grant, payment    | Ограничение orders_check типа CHECK | Стоимость заказа = payment + bonus_payment                                                          |
-| production.orders   | status int                      | Ограничение NOT NULL                | Обеспечивает отсутствие NULL-значений в поле status                                                 |
+| Таблицы                   | Объект                          | Инструмент                                            | Для чего используется                                                                                  |
+| --------------------------| ------------------------------- | ------------------------------------------------------| -------------------------------------------------------------------------------------------------------|
+| production.users          | id int                          | Первичный ключ users_pkey                             | Обеспечивает уникальность записей о пользователях                                                      |
+| production.users          | login varchar(2048)             | Ограничение NOT NULL                                  | Обеспечивает отсутствие NULL-значений в поле login                                                     |
+| production.users          | login varchar(2048)             | Уникальный ключ users_ukey                            | Обеспечивает уникальность пользовательских логинов                                                     |
+| production.products       | id int                          | Первичный ключ products_pkey                          | Обеспечивает уникальность записей о продуктах                                                          |
+| production.products       | name varchar(2048)              | Ограничение NOT NULL                                  | Обеспечивает отсутствие NULL-значений в поле name                                                      |
+| production.products       | price numeric(19,5)             | products_price_check                                  | Обеспечивает наличие только положительных значений цены товара                                         |
+| production.orders         | order_id int                    | Первичный ключ orders                                 | Обеспечивает уникальность записей о заказах                                                            |
+| production.orders         | order_ts timestamp              | Ограничение NOT NULL                                  | Обеспечивает отсутствие NULL-значений в дате и времени заказа                                          |
+| production.orders         | user_id int                     | Ограничение NOT NULL                                  | Обеспечивает отсутствие NULL-значений в идентификаторах пользователей                                  |
+| production.orders         | user_id int                     | Внешний ключ orders_user_id_fk                        | Обеспечивает наличие только тех идентификаторов пользователей, которые присутствуют в таблице users    |
+| production.orders         | bonus_payment numeric(19,5)     | Ограничение NOT NULL                                  | Обеспечивает отсутствие NULL-значений в поле bonus_payment                                             |
+| production.orders         | "cost" numeric(19,5)            | Ограничение NOT NULL                                  | Обеспечивает отсутствие NULL-значений в поле cost                                                      |
+| production.orders         | bonus_grant numeric(19,5)       | Ограничение NOT NULL                                  | Обеспечивает отсутствие NULL-значений в поле bonus_grant                                               |
+| production.orders         | "cost", bonus_grant, payment    | Ограничение orders_check типа CHECK                   | Стоимость заказа = payment + bonus_payment                                                             |
+| production.orders         | status int                      | Ограничение NOT NULL                                  | Обеспечивает отсутствие NULL-значений в поле status                                                    |
+| production.orderstatuses  | id int                          | Первичный ключ ordestatuses_pkey                      | Обеспечивает уникальность записей о статусах заказов                                                   | 
+| production.orderstatuses  | key varchar(255)                | Ограничение NOT NULL                                  | Обеспечивает отсутствие NULL-значений в поле key                                                       |
+| production.orderstatuses  | key varchar(255)                | Уникальный ключ orderstatuses_key_ukey                | Обеспечивает уникальность значений в поле key                                                          |
+| production.orderstatuslog | id int                          | Первичный ключ orderstatuslog_pkey                    | Обеспечивает уникальность значений поля id                                                             |
+| production.orderstatuslog | order_id int                    | Ограничение NOT NULL                                  | Обеспечивает отсутствие NULL-значений в поле order_id                                                  |
+| production.orderstatuslog | order_id int                    | Внешний ключ orderstatuslog_order_id_fkey             | Обеспечивает наличие только тех идентификаторов заказов, которые присутствуют в таблице orders         |
+| production.orderstatuslog | status_id int                   | Ограничение NOT NULL                                  | Обеспечивает отсутствие NULL-значений в поле status_id                                                 | 
+| production.orderstatuslog | status_id int                   | Внешний ключ orderstatuslog_status_id_fkey            | Обеспечивает наличие только тех идентификаторов статусов, которые присутствуют в таблице orderstatuses |  
+| production.orderstatuslog | order_id int, status_id int     | Уникальный ключ orderstatuslog_order_id_status_id_key | У заказа не могут повторяться статусы                                                                  |
+| production.orderstatuslog | dttm timestamp                  | Ограничение NOT NULL                                  | Обеспечивает отсутствие NULL-значений в отметке времени статуса заказа                                 |               
