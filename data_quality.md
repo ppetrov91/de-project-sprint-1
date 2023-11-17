@@ -165,10 +165,10 @@
     CREATE INDEX IF NOT EXISTS orderstatuslog_status_id_ix ON production.orderstatuslog(status_id);
     ```
 
-18) **Поскольку поле product_id таблицы production.orderstatuslog является внешним ключом, то предлагается создать следующий индекс.**
+18) **Поскольку поле product_id таблицы production.orderitems является внешним ключом, то предлагается создать следующий индекс.**
 
     ```SQL
-    CREATE INDEX IF NOT EXISTS orderstatuslog_prooduct_id_ix ON production.orderstatuslog(product_id);
+    CREATE INDEX IF NOT EXISTS orderitems_product_id_ix ON production.orderitems(product_id);
     ```
 ## 1.3.2. Описание используемых инструментов для обеспечения качества данных в таблицах схемы production
 
