@@ -181,6 +181,7 @@
 | production.orders | order_ts timestamp | Ограничение NOT NULL | Обеспечивает отсутствие NULL-значений в дате и времени заказа
 | production.orders | user_id int | Ограничение NOT NULL | Обеспечивает отсутствие NULL-значений в идентификаторах пользователей
 | production.orders | user_id int | Внешний ключ orders_user_id_fk | Обеспечивает наличие только тех идентификаторов пользователей, которые присутствуют в таблице users
+| production.orders | payment numeric(19,5) | Ограничение NOT NULL | Обеспечивает отсутствие NULL-значений в поле payment
 | production.orders | bonus_payment numeric(19,5) | Ограничение NOT NULL | Обеспечивает отсутствие NULL-значений в поле bonus_payment
 | production.orders | "cost" numeric(19,5) | Ограничение NOT NULL | Обеспечивает отсутствие NULL-значений в поле cost
 | production.orders | bonus_grant numeric(19,5) | Ограничение NOT NULL | Обеспечивает отсутствие NULL-значений в поле bonus_grant
