@@ -64,3 +64,6 @@
 ## 2. Доработка представлений
 
 Результаты представлены в файле [sql/orders_view.sql](sql/orders_view.sql)
+
+## 3. Итоговый проект
+Итоговый проект представлен в репозитории [de-project-sprint-1](https://github.com/ppetrov91/de-project-sprint-1)
