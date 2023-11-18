@@ -58,6 +58,7 @@
   - [sql/tmp_rfm_recency.sql](sql/tmp_rfm_recency.sql)
   - [sql/tmp_rfm_frequency.sql](sql/tmp_rfm_frequency.sql)
   - [sql/tmp_rfm_monetary_value.sql](sql/tmp_rfm_monetary_value.sql)
+  - [sql/datamart_query.sql](sql/datamart_query.sql)
 
 
 ## 2. Доработка представлений
