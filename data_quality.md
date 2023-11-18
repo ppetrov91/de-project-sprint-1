@@ -188,7 +188,6 @@
 | production.orders | "cost", bonus_grant, payment | Ограничение orders_check типа CHECK | Стоимость заказа = payment + bonus_payment
 | production.orders | status int | Ограничение NOT NULL | Обеспечивает отсутствие NULL-значений в поле status
 | production.orderstatuses | id int | Первичный ключ ordestatuses_pkey | Обеспечивает уникальность записей о статусах заказов
-| production.orderstatuses | key varchar(255) | Ограничение NOT NULL | Обеспечивает отсутствие NULL-значений в поле key
 | production.orderstatuses | key varchar(255) | Уникальный ключ orderstatuses_key_ukey | Обеспечивает уникальность значений в поле key
 | production.orderstatuslog | id int | Первичный ключ orderstatuslog_pkey | Обеспечивает уникальность значений поля id
 | production.orderstatuslog | order_id int | Ограничение NOT NULL | Обеспечивает отсутствие NULL-значений в поле order_id
