@@ -1,6 +1,6 @@
 ## 1.2. Изучите структуру исходных данных.
 
-1. Для построения представления **analysis.Orders** данные таблицы **production.orders** нужно соединить с таблицей **production.orderstatuses** с помощью JOIN. В **production.orderstatuses** в поле key хранится наименование статуса.
+1. Для построения представления **analysis.Orders** данные таблицы **production.orders** нужно соединить с данными таблицы **production.orderstatuses** с помощью JOIN. В **production.orderstatuses** в поле key хранится наименование статуса.
 
    Диаграмма представлена в **diagrams/order_view_part1.png**.
 
