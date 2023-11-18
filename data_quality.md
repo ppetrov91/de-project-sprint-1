@@ -177,7 +177,7 @@
 | production.products | id int | Первичный ключ products_pkey | Обеспечивает уникальность записей о продуктах
 | production.products | name varchar(2048) | Уникальный ключ products_name_ukey | Обеспечивает уникальность наименований продуктов
 | production.products | price numeric(19,5) | products_price_check | Обеспечивает наличие только положительных значений цены товара
-| production.orders | order_id int | Первичный ключ orders | Обеспечивает уникальность записей о заказа
+| production.orders | order_id int | Первичный ключ orders_pkey | Обеспечивает уникальность записей о заказа
 | production.orders | order_ts timestamp | Ограничение NOT NULL | Обеспечивает отсутствие NULL-значений в дате и времени заказа
 | production.orders | user_id int | Ограничение NOT NULL | Обеспечивает отсутствие NULL-значений в идентификаторах пользователей
 | production.orders | user_id int | Внешний ключ orders_user_id_fk | Обеспечивает наличие только тех идентификаторов пользователей, которые присутствуют в таблице users
