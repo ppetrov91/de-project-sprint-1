@@ -6,4 +6,4 @@
 
    Диаграмма представлена в **diagrams/schema_part1.png**
 
-   ![title](Images/schema_part1.png)
+   ![title](diagrams/schema_part1.png)
