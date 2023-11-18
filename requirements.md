@@ -18,3 +18,4 @@
 
    Диаграмма представлена в **diagrams/orders_view.png**
 
+   ![title](diagrams/orders_view.png)
