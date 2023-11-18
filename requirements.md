@@ -2,7 +2,7 @@
 
 1. Для построения представления **analysis.Orders** данные таблицы **production.orders** нужно соединить с данными таблицы **production.orderstatuses** с помощью JOIN. В **production.orderstatuses** в поле key хранится наименование статуса.
 
-   Диаграмма представлена в [diagrams/order_view_part1.png](diagrams/order_view_part1.png)
+   Диаграмма представлена в [diagrams/orders_view_part1.png](diagrams/orders_view_part1.png)
 
    ![title](diagrams/orders_view_part1.png)
 
